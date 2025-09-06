@@ -1,7 +1,7 @@
 import wikipedia
 import webbrowser
 import requests
-
+selected_result = ""
 print("---WikiDive v1.0---")
 
 def search_topic(topic):
@@ -31,22 +31,25 @@ def select_result(topic):
     if results == None:
         print("NO results found!")
         return
-    while True:
-        try:
-            ask_user_result =  input("Select the topic you want to view: ")
-            if ask_user_result.isdigit(): #if user enters digit, selects result at that index
-                ask_user_result = int(ask_user_result) - 1
-                selected_result = get_summary(results[ask_user_result])
-                break
-            else:
-                ask_user_result = results.index(ask_user_result.lower())
-                selected_result = get_summary(results[ask_user_result])
-                break
-        except IndexError:
-            print(f"Plese enter numbers from 1-{len(results)}")
-        except ValueError:
-            print(f"Please only enter the search results or enter numbers from 1-{len(results)}")
-    return selected_result        
+    else:
+        while True:
+            try:
+                ask_user_result =  input("Select the topic you want to view: ")
+                if ask_user_result.isdigit(): #if user enters digit, selects result at that index
+                    ask_user_result = int(ask_user_result) - 1
+                    selected_result = results[ask_user_result]
+                    get_summary(selected_result)
+                    break
+                else:
+                    ask_user_result = results.index(ask_user_result.lower())
+                    selected_result = results[ask_user_result]
+                    get_summary(selected_result)
+                    break
+            except IndexError:
+                print(f"Plese enter numbers from 1-{len(results)}")
+            except ValueError:
+                print(f"Please only enter the search results or enter numbers from 1-{len(results)}")
+        return selected_result        
     
 #gives the summary of the topic selected by user
 def get_summary(topic):
@@ -54,11 +57,14 @@ def get_summary(topic):
         try:
             summary = wikipedia.summary(topic)
             if summary:
-                print(f"'{topic.title()}' summary:\n")
-                print(summary)
+                print(f"\n'{topic.title()}' summary:")
+                print(summary.strip()+"\n")
                 break
         except wikipedia.exceptions.PageError:
             print("Page Not Found! Try another search.")
+            new_topic = input("Enter a new topic: ").strip()
+            select_result(new_topic) 
+            
 
 #displays full page if user wants (prompted in main() function)
 def full_page(topic):
